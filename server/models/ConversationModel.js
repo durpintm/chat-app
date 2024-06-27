@@ -48,7 +48,10 @@ const conversationSchema = new mongoose.Schema(
   }
 );
 
-const MessageModel = mongoose.model("Message", messageSchema);
-const ConversationModel = mongoose.model("Conversation", conversationSchema);
+const MessageModel =
+  mongoose.models.Message || mongoose.model("Message", messageSchema);
+
+const ConversationModel =
+  mongoose.models.Conversation || mongoose.model("Conversation", userSchema);
 
 module.exports = { MessageModel, ConversationModel };

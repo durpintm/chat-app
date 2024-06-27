@@ -1,4 +1,4 @@
-const UserModel = require("../models/UserModel");
+const UserModel = require("../models/UserModel.js");
 const bcryptjs = require("bcryptjs");
 
 async function registerUser(req, res) {
@@ -13,13 +13,13 @@ async function registerUser(req, res) {
       });
     }
 
-    const salt = bcryptjs.genSalt(10);
+    const salt = await bcryptjs.genSalt(10);
     const hashPassword = await bcryptjs.hash(password, salt);
 
     const payload = {
-      name,
-      email,
-      profile_image,
+      name: name,
+      email: email,
+      profile_pic: profile_pic,
       password: hashPassword,
     };
 
