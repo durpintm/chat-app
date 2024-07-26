@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { IoCloseSharp } from "react-icons/io5";
 import { Link } from "react-router-dom";
+import uploadFile from "../helpers/uploadFile";
 
 const Register = () => {
   const [data, setData] = useState({
@@ -19,9 +20,16 @@ const Register = () => {
     });
   };
 
-  const handleUploadPhoto = (e) => {
+  const handleUploadPhoto = async (e) => {
     const file = e.target.files[0];
+    const uploadPhoto = await uploadFile(file);
     setUploadPhoto(file);
+    setData((prev) => {
+      return {
+        ...prev,
+        profile_pic: uploadPhoto?.url,
+      };
+    });
   };
 
   const handleClearUploadPhoto = (e) => {
@@ -38,7 +46,7 @@ const Register = () => {
 
   return (
     <div className="mt-5">
-      <div className="bg-white w-full max-w-lg rounded overflow-hidden p-4 mx-auto">
+      <div className="bg-white w-full max-w-md rounded overflow-hidden p-4 md:mx-auto">
         <h3 className="font-bold text-2xl text-primary">
           Welcome to Chat App!
         </h3>
@@ -103,7 +111,6 @@ const Register = () => {
               type="file"
               id="profile_pic"
               name="profile_pic"
-              value={data.profile_pic}
               className="bg-slate-100 px-2 py-1 focus:outline-primary hidden"
               onChange={handleUploadPhoto}
             />
