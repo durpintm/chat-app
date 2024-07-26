@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import logo from "../assets/logo.png";
 const AuthLayout = ({ children }) => {
   return (

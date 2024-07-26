@@ -6,6 +6,7 @@ import Avatar from "../components/Avatar";
 
 const CheckPassword = () => {
   const [data, setData] = useState({
+    userId: "",
     password: "",
   });
 
@@ -31,7 +32,15 @@ const CheckPassword = () => {
     const URL = `${import.meta.env.VITE_APP_BACKEND_URL}/api/password`;
 
     try {
-      const response = await axios.post(URL, data);
+      const response = await axios({
+        method: "POST",
+        url: URL,
+        data: {
+          userId: location?.state?._id,
+          password: data.password,
+        },
+        withCredentials: true,
+      });
       toast.success(response.data.message);
 
       if (response.data.success) {
@@ -80,7 +89,6 @@ const CheckPassword = () => {
           </button>
         </form>
         <p className="my-4 text-center">
-          New User?
           <Link
             to={"/forgot-password"}
             className="hover:text-primary font-semibold"
