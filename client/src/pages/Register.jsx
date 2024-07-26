@@ -1,7 +1,9 @@
 import { useState } from "react";
 import { IoCloseSharp } from "react-icons/io5";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import uploadFile from "../helpers/uploadFile";
+import axios from "axios";
+import toast from "react-hot-toast";
 
 const Register = () => {
   const [data, setData] = useState({
@@ -12,6 +14,7 @@ const Register = () => {
   });
 
   const [uploadPhoto, setUploadPhoto] = useState("");
+  const navigate = useNavigate();
 
   const handleOnChange = (e) => {
     const { name, value } = e.target;
@@ -38,10 +41,26 @@ const Register = () => {
     setUploadPhoto(null);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     e.stopPropagation();
-    console.log(data);
+    const URL = `${import.meta.env.VITE_APP_BACKEND_URL}/api/register`;
+
+    try {
+      const response = await axios.post(URL, data);
+      if (response.data.success) {
+        setData({
+          name: "",
+          email: "",
+          password: "",
+          profile_pic: "",
+        });
+        navigate("/email");
+      }
+      toast.success(response.data.message);
+    } catch (error) {
+      toast.error(error?.message);
+    }
   };
 
   return (
