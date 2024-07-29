@@ -1,7 +1,14 @@
-import { Outlet } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useEffect } from "react";
+import { useDispatch } from "react-redux";
+import { logout, setUser } from "../redux/userSlice";
+
 const Home = () => {
+  // const user = useSelector((state) => state.user);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
   const fetchUserDetails = async () => {
     try {
       const URL = `${import.meta.env.VITE_APP_BACKEND_URL}/api/user-details`;
@@ -11,7 +18,12 @@ const Home = () => {
         withCredentials: true,
       });
 
-      console.log("Current User Details: ", response);
+      dispatch(setUser(response?.data?.data));
+
+      if (response?.data?.logout) {
+        dispatch(logout());
+        navigate("/email");
+      }
     } catch (error) {
       console.log(error.message);
     }

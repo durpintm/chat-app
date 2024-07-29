@@ -4,7 +4,6 @@ async function userDetails(req, res) {
   try {
     const token = req.cookies.token || "";
     const user = await getUserDetailsFromToken(token);
-    console.log(user);
     return res.status(200).json({
       message: "User Details",
       data: user,

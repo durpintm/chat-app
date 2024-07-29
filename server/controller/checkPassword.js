@@ -5,9 +5,7 @@ const jwt = require("jsonwebtoken");
 async function checkPassword(req, res) {
   try {
     const { password, userId } = req.body;
-    console.log(userId);
     const user = await UserModel.findById(userId);
-    console.log(user);
     const verifyPassword = await bcryptjs.compare(password, user.password);
 
     if (!verifyPassword) {
