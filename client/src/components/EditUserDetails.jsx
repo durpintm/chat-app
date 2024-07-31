@@ -17,8 +17,6 @@ const EditUserDetails = ({ onClose, user }) => {
     profile_pic: user?.profile_pic,
   });
 
-  console.log(user);
-
   const uploadPhotoRef = useRef();
   const dispatch = useDispatch();
 
