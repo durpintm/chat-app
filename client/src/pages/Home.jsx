@@ -3,6 +3,7 @@ import axios from "axios";
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { logout, setUser } from "../redux/userSlice";
+import Sidebar from "../components/Sidebar";
 
 const Home = () => {
   // const user = useSelector((state) => state.user);
@@ -33,10 +34,11 @@ const Home = () => {
     fetchUserDetails();
   }, []);
   return (
-    <div>
-      Home
+    <div className="grid lg:grid-cols-[300px,1fr] h-screen max-h-screen">
+      <section className="bg-white">
+        <Sidebar />
+      </section>
       <section>
-        {/* Message Component */}
         <Outlet />
       </section>
     </div>
