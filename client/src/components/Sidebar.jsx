@@ -7,12 +7,13 @@ import { useSelector } from "react-redux";
 import { useState } from "react";
 import EditUserDetails from "./EditUserDetails";
 import { FiArrowUpLeft } from "react-icons/fi";
+import SearchUser from "./SearchUser";
 
 const Sidebar = () => {
   const user = useSelector((state) => state.user);
   const [editUserOpen, setEditUserOpen] = useState(false);
   const [allUser, setAllUser] = useState([]);
-  const [openSerchUser, setOpenSearchUser] = useState(false);
+  const [openSerchUser, setOpenSearchUser] = useState(true);
 
   return (
     <div className="w-full h-full grid grid-cols-[48px,1fr] bg-white">
@@ -29,6 +30,9 @@ const Sidebar = () => {
             <IoChatbubbleEllipses size={22} />
           </NavLink>
           <NavLink
+            onClick={() => {
+              setOpenSearchUser(true);
+            }}
             title="Add Friend"
             className="w-12 h-12 flex justify-center items-center cursor-pointer hover:bg-slate-200 rounded"
           >
@@ -86,7 +90,13 @@ const Sidebar = () => {
       )}
 
       {/* Search Users */}
-      {openSerchUser}
+      {openSerchUser && (
+        <SearchUser
+          onClose={() => {
+            setOpenSearchUser(false);
+          }}
+        />
+      )}
     </div>
   );
 };
