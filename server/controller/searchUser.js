@@ -7,7 +7,7 @@ async function searchUser(req, res) {
 
     const users = await UserModel.find({
       $or: [{ name: query }, { email: query }],
-    });
+    }).select("-password");
 
     return res.json({
       message: "All users",
@@ -22,4 +22,4 @@ async function searchUser(req, res) {
   }
 }
 
-module.export = searchUser;
+module.exports = searchUser;

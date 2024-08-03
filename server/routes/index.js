@@ -5,9 +5,7 @@ const checkPassword = require("../controller/checkPassword.js");
 const userDetails = require("../controller/userDetails.js");
 const logout = require("../controller/logout.js");
 const updateUserDetails = require("../controller/updateUserDetails.js");
-const {
-  default: SearchUser,
-} = require("../../client/src/components/SearchUser.jsx");
+const searchUser = require("../controller/searchUser.js");
 
 const router = express.Router();
 
@@ -30,6 +28,6 @@ router.get("/logout", logout);
 router.post("/update-user", updateUserDetails);
 
 // search users
-router.post("search-user", SearchUser);
+router.post("/search-user", searchUser);
 
 module.exports = router;

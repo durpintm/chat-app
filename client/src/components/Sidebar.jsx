@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { IoChatbubbleEllipses } from "react-icons/io5";
 import { FaUserPlus } from "react-icons/fa";
 import { BiLogOut } from "react-icons/bi";
