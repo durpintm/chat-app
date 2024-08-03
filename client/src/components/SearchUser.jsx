@@ -1,12 +1,13 @@
+/* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
 import { useEffect, useState } from "react";
-import { IoSearchOutline } from "react-icons/io5";
+import { IoClose, IoSearchOutline } from "react-icons/io5";
 import Loading from "./Loading";
 import UserSearchCard from "./UserSearchCard";
 import toast from "react-hot-toast";
 import axios from "axios";
 
-const SearchUser = () => {
+const SearchUser = ({ onClose }) => {
   const [searchUser, setSearchUser] = useState([]);
   const [loading, setLoading] = useState(false);
   const [search, setSearch] = useState("");
@@ -58,9 +59,19 @@ const SearchUser = () => {
           {searchUser.length !== 0 &&
             !loading &&
             searchUser.map((user) => {
-              return <UserSearchCard key={user._id} user={user} />;
+              return (
+                <UserSearchCard key={user._id} user={user} onClose={onClose} />
+              );
             })}
         </div>
+      </div>
+      <div>
+        <button
+          className="absolute top-0 right-0 text-2xl p-2 lg:text-4xl hover:text-white"
+          onClick={onClose}
+        >
+          <IoClose />
+        </button>
       </div>
     </div>
   );
