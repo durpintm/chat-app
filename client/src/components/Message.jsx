@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useParams, Link } from "react-router-dom";
@@ -8,6 +9,7 @@ import { FaPlus } from "react-icons/fa6";
 import { FaImage } from "react-icons/fa6";
 import { FaVideo } from "react-icons/fa6";
 import { IoClose } from "react-icons/io5";
+import { IoMdSend } from "react-icons/io";
 import uploadFile from "../helpers/uploadFile";
 import Loading from "./Loading";
 import wallpaper from "../assets/wallpaper.jpeg";
@@ -100,6 +102,32 @@ const Message = () => {
     }
   }, [socketConnection, params?.userId, user]);
 
+  const handleMessageOnChange = (e) => {
+    const { name, value } = e.target;
+    setMessage((prev) => {
+      return {
+        ...prev,
+        text: value,
+      };
+    });
+  };
+
+  const handleSendMessage = (e) => {
+    e.preventDefault();
+
+    if (message.text || message.imageUrl || message.videoUrl) {
+      if (socketConnection) {
+        socketConnection.emit("new message", {
+          sender: user?._id,
+          receiver: params.userId,
+          text: message.text,
+          imageUrl: message.imageUrl,
+          videoUrl: message.videoUrl,
+        });
+      }
+    }
+  };
+
   return (
     <div
       style={{ backgroundImage: `url(${wallpaper})` }}
@@ -141,7 +169,6 @@ const Message = () => {
           </button>
         </div>
       </header>
-
       {/* show all messages */}
       <section className="h-[calc(100vh-128px)]  overflow-x-hidden overflow-y-scroll scrollbar relative bg-slate-200 bg-opacity-40">
         {/* upload image display */}
@@ -191,15 +218,14 @@ const Message = () => {
         )}
         show all messages
       </section>
-
       {/* Send messages */}
       <section className="h-16 bg-white flex items-center">
         <div className="relative">
           <button
             onClick={handleMediaUpload}
-            className="flex justify-center items-center w-11 h-11 rounded-full hover:bg-primary hover:text-white px-4"
+            className="flex justify-center items-center w-12 h-12 rounded-full hover:bg-primary hover:text-white px-4"
           >
-            <FaPlus size={22} />
+            <FaPlus size={25} />
           </button>
 
           {/* video and image */}
@@ -242,7 +268,25 @@ const Message = () => {
             </div>
           )}
         </div>
+        <form
+          action=""
+          className="h-full w-full flex mr-2"
+          onSubmit={handleSendMessage}
+        >
+          <input
+            type="text"
+            placeholder="Message"
+            className="py-1 px-4 outline-none w-full h-full"
+            value={message.text}
+            onChange={handleMessageOnChange}
+          />
+
+          <button className="text-primary hover:text-secondary">
+            <IoMdSend size={25} />
+          </button>
+        </form>
       </section>
+      {/* input box */}
     </div>
   );
 };
