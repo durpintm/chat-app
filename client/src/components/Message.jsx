@@ -9,6 +9,8 @@ import { FaImage } from "react-icons/fa6";
 import { FaVideo } from "react-icons/fa6";
 import { IoClose } from "react-icons/io5";
 import uploadFile from "../helpers/uploadFile";
+import Loading from "./Loading";
+import wallpaper from "../assets/wallpaper.jpeg";
 
 const Message = () => {
   const params = useParams();
@@ -33,13 +35,18 @@ const Message = () => {
 
   const [mediaUpload, setMediaUpload] = useState(false);
 
+  const [loading, setLoading] = useState(false);
+
   const handleMediaUpload = () => {
     setMediaUpload((prev) => !prev);
   };
 
   const handleUploadImage = async (e) => {
     const file = e.target.files[0];
+    setLoading(true);
     const uploadPhoto = await uploadFile(file);
+    setLoading(false);
+    setMediaUpload(false);
 
     setMessage((prev) => {
       return {
@@ -69,7 +76,11 @@ const Message = () => {
 
   const handleUploadVideo = async (e) => {
     const file = e.target.files[0];
+    setLoading(true);
+
     const uploadVideo = await uploadFile(file);
+    setLoading(false);
+    setMediaUpload(false);
 
     setMessage((prev) => {
       return {
@@ -90,7 +101,10 @@ const Message = () => {
   }, [socketConnection, params?.userId, user]);
 
   return (
-    <div>
+    <div
+      style={{ backgroundImage: `url(${wallpaper})` }}
+      className="bg-no-repeat bg-cover"
+    >
       <header className="sticky top-0 h-16 bg-white flex justify-between items-center px-4">
         <div className="flex items-center gap-4">
           <Link to={"/"} className="lg:hidden">
@@ -129,7 +143,7 @@ const Message = () => {
       </header>
 
       {/* show all messages */}
-      <section className="h-[calc(100vh-128px)]  overflow-x-hidden overflow-y-scroll scrollbar relative">
+      <section className="h-[calc(100vh-128px)]  overflow-x-hidden overflow-y-scroll scrollbar relative bg-slate-200 bg-opacity-40">
         {/* upload image display */}
         {message.imageUrl && (
           <div className="w-full h-full bg-slate-700 bg-opacity-30 flex justify-center items-center rounded overflow-hidden">
@@ -150,8 +164,7 @@ const Message = () => {
             </div>
           </div>
         )}
-
-        {/* upload image display */}
+        {/* upload video display */}
         {message.videoUrl && (
           <div className="w-full h-full bg-slate-700 bg-opacity-30 flex justify-center items-center rounded overflow-hidden">
             <div
@@ -171,6 +184,12 @@ const Message = () => {
             </div>
           </div>
         )}
+        {loading && (
+          <div className="w-full h-full flex justify-center items-center">
+            <Loading />
+          </div>
+        )}
+        show all messages
       </section>
 
       {/* Send messages */}
@@ -199,7 +218,7 @@ const Message = () => {
                 </label>
                 <label
                   htmlFor="uploadVideo"
-                  className="flex p-2 items-center gap-4 hover:bg-slate-200 cursor-pointer"
+                  className="flex p-2 px-4 items-center gap-4 hover:bg-slate-200 cursor-pointer"
                 >
                   <div className="text-purple-500">
                     <FaVideo size={18} />
@@ -211,11 +230,13 @@ const Message = () => {
                   type="file"
                   onChange={handleUploadImage}
                   id="uploadImage"
+                  className="hidden"
                 />
                 <input
                   type="file"
                   onChange={handleUploadVideo}
                   id="uploadVideo"
+                  className="hidden"
                 />
               </form>
             </div>
