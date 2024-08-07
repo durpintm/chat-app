@@ -7,6 +7,7 @@ const {
   ConversationModel,
   MessageModel,
 } = require("../models/ConversationModel");
+const getConversation = require("../helpers/conversation");
 const app = express();
 
 // socket connection
@@ -131,36 +132,24 @@ io.on("connection", async (socket) => {
       "message",
       getConversationMessage?.messages || []
     );
+
+    // side bar conversation
+
+    const conversationSenderSidebar = await getConversation(data?.sender);
+    const conversationReceiverSidebar = await getConversation(data?.receiver);
+
+    io.to(data?.sender).emit("conversation", conversationSenderSidebar || []);
+    io.to(data?.receiver).emit(
+      "conversation",
+      conversationReceiverSidebar || []
+    );
   });
 
   // sidebar
   socket.on("sidebar", async (currentUserId) => {
-    if (currentUserId) {
-      const currentUserConversation = await ConversationModel.find({
-        $or: [{ sender: currentUserId }, { receiver: currentUserId }],
-      })
-        .sort({ updatedAt: -1 })
-        .populate("messages")
-        .populate("sender")
-        .populate("receiver");
+    const conversation = await getConversation(currentUserId);
 
-      const conversation = currentUserConversation.map((conv) => {
-        const countUnseenMsg = conv.messages.reduce(
-          (prev, curr) => prev + (curr.seen ? 0 : 1),
-          0
-        );
-
-        return {
-          _id: conv?._id,
-          sender: conv?.sender,
-          receiver: conv?.receiver,
-          unseenMessage: countUnseenMsg,
-          lastMessage: conv.messages[conv?.messages?.length - 1],
-        };
-      });
-
-      socket.emit("conversation", conversation);
-    }
+    socket.emit("conversation", conversation);
   });
 
   // disconnect

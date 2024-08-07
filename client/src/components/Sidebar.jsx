@@ -2,7 +2,7 @@
 import { IoChatbubbleEllipses } from "react-icons/io5";
 import { FaUserPlus } from "react-icons/fa";
 import { BiLogOut } from "react-icons/bi";
-import { json, NavLink } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import Avatar from "./Avatar";
 import { useSelector } from "react-redux";
 import { useEffect, useState } from "react";
@@ -43,6 +43,7 @@ const Sidebar = () => {
             };
           }
         });
+        console.log("Convo users", conversationUserData);
         setAllUser(conversationUserData);
       });
     }
@@ -120,7 +121,8 @@ const Sidebar = () => {
           {allUser &&
             allUser.map((conv, index) => {
               return (
-                <div
+                <NavLink
+                  to={"/" + conv?.userDetails?._id}
                   key={conv?._id}
                   className="flex items-center gap-2 py-4 px-2 border border-transparent hover:border-primary rounded hover:bg-slate-100 cursor-pointer"
                 >
@@ -162,7 +164,7 @@ const Sidebar = () => {
                   <p className="w-6 h-6 text-xs flex justify-center items-center ml-auto p-1 bg-primary text-white font-semibold rounded-full">
                     <span>{conv?.unseenMessage}</span>
                   </p>
-                </div>
+                </NavLink>
               );
             })}
         </div>
