@@ -38,6 +38,7 @@ const Message = () => {
   const [mediaUpload, setMediaUpload] = useState(false);
 
   const [loading, setLoading] = useState(false);
+  const [allMessages, setAllMessages] = useState([]);
 
   const handleMediaUpload = () => {
     setMediaUpload((prev) => !prev);
@@ -100,7 +101,8 @@ const Message = () => {
         setUserData(data);
       });
       socketConnection.on("message", (data) => {
-        console.log("Message: ", data);
+        // console.log("Message: ", data);
+        setAllMessages(data);
       });
     }
   }, [socketConnection, params?.userId, user]);
@@ -127,6 +129,12 @@ const Message = () => {
           imageUrl: message.imageUrl,
           videoUrl: message.videoUrl,
           messageByUserId: user?._id,
+        });
+
+        setMessage({
+          text: "",
+          imageUrl: "",
+          videoUrl: "",
         });
       }
     }
@@ -220,7 +228,17 @@ const Message = () => {
             <Loading />
           </div>
         )}
-        show all messages
+        {/* show all messages */}
+
+        <div className="flex flex-col gap-2">
+          {allMessages.map((msg, index) => {
+            return (
+              <div className="bg-white p-2 py-1 rounded w-fit" key={index}>
+                <p className="px-2">{msg.text}</p>
+              </div>
+            );
+          })}
+        </div>
       </section>
       {/* Send messages */}
       <section className="h-16 bg-white flex items-center">
