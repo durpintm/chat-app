@@ -5,16 +5,28 @@ import { BiLogOut } from "react-icons/bi";
 import { NavLink } from "react-router-dom";
 import Avatar from "./Avatar";
 import { useSelector } from "react-redux";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import EditUserDetails from "./EditUserDetails";
 import { FiArrowUpLeft } from "react-icons/fi";
 import SearchUser from "./SearchUser";
 
 const Sidebar = () => {
-  const user = useSelector((state) => state.user);
+  const user = useSelector((state) => state?.user);
   const [editUserOpen, setEditUserOpen] = useState(false);
   const [allUser, setAllUser] = useState([]);
   const [openSerchUser, setOpenSearchUser] = useState(false);
+  const socketConnection = useSelector(
+    (state) => state?.user?.socketConnection
+  );
+  useEffect(() => {
+    if (socketConnection) {
+      socketConnection.emit("sidebar", user?._id);
+
+      socketConnection.on("conversation", (data) => {
+        console.log("Convo: ", data);
+      });
+    }
+  }, [socketConnection, user]);
 
   return (
     <div className="w-full h-full grid grid-cols-[48px,1fr] bg-white">

@@ -111,7 +111,7 @@ const Message = () => {
         setUserData(data);
       });
       socketConnection.on("message", (data) => {
-        // console.log("Message: ", data);
+        console.log("Message: ", data);
         setAllMessages(data);
       });
     }
@@ -196,39 +196,42 @@ const Message = () => {
         {/* show all messages */}
 
         <div className="flex flex-col gap-2 py-4 mx-2" ref={currentMessage}>
-          {allMessages.map((msg, index) => {
-            return (
-              <div
-                className={`bg-white p-2 py-1 rounded w-fit max-w-[280px] md:max-w-sm lg:max-w-md ${
-                  user._id === msg.messageByUserId ? "ml-auto bg-teal-100" : ""
-                }`}
-                key={index}
-              >
-                <div className="w-full">
-                  {msg?.imageUrl && (
-                    <img
-                      className="w-full h-full object-scale-down"
-                      src={msg?.imageUrl}
-                      alt="Uploaded Image"
-                    />
-                  )}
+          {allMessages &&
+            allMessages.map((msg, index) => {
+              return (
+                <div
+                  className={`bg-white p-2 py-1 rounded w-fit max-w-[280px] md:max-w-sm lg:max-w-md ${
+                    user._id === msg.messageByUserId
+                      ? "ml-auto bg-teal-100"
+                      : ""
+                  }`}
+                  key={index}
+                >
+                  <div className="w-full">
+                    {msg?.imageUrl && (
+                      <img
+                        className="w-full h-full object-scale-down"
+                        src={msg?.imageUrl}
+                        alt="Uploaded Image"
+                      />
+                    )}
 
-                  {msg?.videoUrl && (
-                    <video
-                      controls
-                      className="w-full h-full object-scale-down"
-                      src={msg?.videoUrl}
-                      alt="Uploaded Image"
-                    />
-                  )}
+                    {msg?.videoUrl && (
+                      <video
+                        controls
+                        className="w-full h-full object-scale-down"
+                        src={msg?.videoUrl}
+                        alt="Uploaded Image"
+                      />
+                    )}
+                  </div>
+                  <p className="px-2">{msg.text}</p>
+                  <p className="text-xs ml-auto w-fit pr-2">
+                    {moment(msg.createdAt).format("hh:mm")}
+                  </p>
                 </div>
-                <p className="px-2">{msg.text}</p>
-                <p className="text-xs ml-auto w-fit pr-2">
-                  {moment(msg.createdAt).format("hh:mm")}
-                </p>
-              </div>
-            );
-          })}
+              );
+            })}
         </div>
 
         {/* upload image display */}
