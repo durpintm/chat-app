@@ -63,7 +63,7 @@ io.on("connection", async (socket) => {
       .populate("messages")
       .sort({ updateAt: -1 });
 
-    socket.emit("message", getConversationMessage?.messages);
+    socket.emit("message", getConversationMessage?.messages || []);
   });
 
   // new message
@@ -126,36 +126,41 @@ io.on("connection", async (socket) => {
       .populate("messages")
       .sort({ updateAt: -1 });
 
-    io.to(data?.sender).emit("message", getConversationMessage.messages);
-    io.to(data?.receiver).emit("message", getConversationMessage.messages);
+    io.to(data?.sender).emit("message", getConversationMessage?.messages || []);
+    io.to(data?.receiver).emit(
+      "message",
+      getConversationMessage?.messages || []
+    );
   });
 
   // sidebar
   socket.on("sidebar", async (currentUserId) => {
-    const currentUserConversation = await ConversationModel.find({
-      $or: [{ sender: currentUserId }, { receiver: currentUserId }],
-    })
-      .sort({ updatedAt: -1 })
-      .populate("messages")
-      .populate("sender")
-      .populate("receiver");
+    if (currentUserId) {
+      const currentUserConversation = await ConversationModel.find({
+        $or: [{ sender: currentUserId }, { receiver: currentUserId }],
+      })
+        .sort({ updatedAt: -1 })
+        .populate("messages")
+        .populate("sender")
+        .populate("receiver");
 
-    const conversation = currentUserConversation.map((conv) => {
-      const countUnseenMsg = conv.messages.reduce(
-        (prev, curr) => prev + (curr.seen ? 0 : 1),
-        0
-      );
+      const conversation = currentUserConversation.map((conv) => {
+        const countUnseenMsg = conv.messages.reduce(
+          (prev, curr) => prev + (curr.seen ? 0 : 1),
+          0
+        );
 
-      return {
-        _id: conv?._id,
-        sender: conv?.sender,
-        receiver: conv?.receiver,
-        unseenMessage: countUnseenMsg,
-        lastMessage: conv.messages[conv?.messages?.length - 1],
-      };
-    });
+        return {
+          _id: conv?._id,
+          sender: conv?.sender,
+          receiver: conv?.receiver,
+          unseenMessage: countUnseenMsg,
+          lastMessage: conv.messages[conv?.messages?.length - 1],
+        };
+      });
 
-    socket.emit("conversation", conversation);
+      socket.emit("conversation", conversation);
+    }
   });
 
   // disconnect

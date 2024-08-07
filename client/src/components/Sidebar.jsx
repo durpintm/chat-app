@@ -2,13 +2,15 @@
 import { IoChatbubbleEllipses } from "react-icons/io5";
 import { FaUserPlus } from "react-icons/fa";
 import { BiLogOut } from "react-icons/bi";
-import { NavLink } from "react-router-dom";
+import { json, NavLink } from "react-router-dom";
 import Avatar from "./Avatar";
 import { useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import EditUserDetails from "./EditUserDetails";
 import { FiArrowUpLeft } from "react-icons/fi";
 import SearchUser from "./SearchUser";
+import { FaImage } from "react-icons/fa6";
+import { FaVideo } from "react-icons/fa6";
 
 const Sidebar = () => {
   const user = useSelector((state) => state?.user);
@@ -23,7 +25,25 @@ const Sidebar = () => {
       socketConnection.emit("sidebar", user?._id);
 
       socketConnection.on("conversation", (data) => {
-        console.log("Convo: ", data);
+        const conversationUserData = data.map((convUser, index) => {
+          if (convUser?.sender._id === convUser?.receiver?._id) {
+            return {
+              ...convUser,
+              userDetails: convUser.sender,
+            };
+          } else if (convUser?.receiver?._id !== user?._id) {
+            return {
+              ...convUser,
+              userDetails: convUser.receiver,
+            };
+          } else {
+            return {
+              ...convUser,
+              userDetails: convUser?.sender,
+            };
+          }
+        });
+        setAllUser(conversationUserData);
       });
     }
   }, [socketConnection, user]);
@@ -96,6 +116,55 @@ const Sidebar = () => {
               </p>
             </div>
           )}
+
+          {allUser &&
+            allUser.map((conv, index) => {
+              return (
+                <div
+                  key={conv?._id}
+                  className="flex items-center gap-2 py-4 px-2 border border-transparent hover:border-primary rounded hover:bg-slate-100 cursor-pointer"
+                >
+                  <div>
+                    <Avatar
+                      imageUrl={conv?.userDetails?.profile_pic}
+                      name={conv?.userDetails?.name}
+                      width={40}
+                      height={40}
+                    />
+                  </div>
+                  <div>
+                    <h3 className="text-ellipsis line-clamp-1 font-semibold text-base">
+                      {conv?.userDetails?.name}
+                    </h3>
+                    <div className="text-slate-600 text-xs flex items-center gap-2">
+                      <div className="flex items-center gap-2">
+                        {conv?.lastMessage?.imageUrl && (
+                          <div className="flex items-center gap-1">
+                            <span>
+                              <FaImage />
+                            </span>
+                            {!conv?.lastMessage?.text && <span>Image</span>}
+                          </div>
+                        )}
+
+                        {conv?.lastMessage?.videoUrl && (
+                          <div className="flex items-center gap-1">
+                            <span>
+                              <FaVideo />
+                            </span>
+                            {!conv?.lastMessage?.text && <span>Video</span>}
+                          </div>
+                        )}
+                      </div>
+                      <p>{conv?.lastMessage?.text}</p>
+                    </div>
+                  </div>
+                  <p className="w-6 h-6 text-xs flex justify-center items-center ml-auto p-1 bg-primary text-white font-semibold rounded-full">
+                    <span>{conv?.unseenMessage}</span>
+                  </p>
+                </div>
+              );
+            })}
         </div>
       </div>
 
