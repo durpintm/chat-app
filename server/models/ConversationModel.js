@@ -18,6 +18,11 @@ const messageSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    messageByUserId: {
+      type: mongoose.Schema.ObjectId,
+      require: true,
+      ref: "User",
+    },
   },
   {
     timestamps: true,
@@ -52,6 +57,7 @@ const MessageModel =
   mongoose.models.Message || mongoose.model("Message", messageSchema);
 
 const ConversationModel =
-  mongoose.models.Conversation || mongoose.model("Conversation", userSchema);
+  mongoose.models.Conversation ||
+  mongoose.model("Conversation", conversationSchema);
 
 module.exports = { MessageModel, ConversationModel };

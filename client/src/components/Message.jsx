@@ -99,6 +99,9 @@ const Message = () => {
       socketConnection.on("message-users", (data) => {
         setUserData(data);
       });
+      socketConnection.on("message", (data) => {
+        console.log("Message: ", data);
+      });
     }
   }, [socketConnection, params?.userId, user]);
 
@@ -123,6 +126,7 @@ const Message = () => {
           text: message.text,
           imageUrl: message.imageUrl,
           videoUrl: message.videoUrl,
+          messageByUserId: user?._id,
         });
       }
     }
