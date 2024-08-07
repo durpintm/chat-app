@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import { useParams, Link } from "react-router-dom";
 import Avatar from "../components/Avatar";
@@ -13,6 +13,7 @@ import { IoMdSend } from "react-icons/io";
 import uploadFile from "../helpers/uploadFile";
 import Loading from "./Loading";
 import wallpaper from "../assets/wallpaper.jpeg";
+import moment from "moment";
 
 const Message = () => {
   const params = useParams();
@@ -39,7 +40,16 @@ const Message = () => {
 
   const [loading, setLoading] = useState(false);
   const [allMessages, setAllMessages] = useState([]);
+  const currentMessage = useRef(null);
 
+  useEffect(() => {
+    if (currentMessage.current) {
+      currentMessage.current.scrollIntoView({
+        behaviour: "smooth",
+        block: "end",
+      });
+    }
+  }, [allMessages]);
   const handleMediaUpload = () => {
     setMediaUpload((prev) => !prev);
   };
@@ -181,11 +191,49 @@ const Message = () => {
           </button>
         </div>
       </header>
-      {/* show all messages */}
+
       <section className="h-[calc(100vh-128px)]  overflow-x-hidden overflow-y-scroll scrollbar relative bg-slate-200 bg-opacity-40">
+        {/* show all messages */}
+
+        <div className="flex flex-col gap-2 py-4 mx-2" ref={currentMessage}>
+          {allMessages.map((msg, index) => {
+            return (
+              <div
+                className={`bg-white p-2 py-1 rounded w-fit max-w-[280px] md:max-w-sm lg:max-w-md ${
+                  user._id === msg.messageByUserId ? "ml-auto bg-teal-100" : ""
+                }`}
+                key={index}
+              >
+                <div className="w-full">
+                  {msg?.imageUrl && (
+                    <img
+                      className="w-full h-full object-scale-down"
+                      src={msg?.imageUrl}
+                      alt="Uploaded Image"
+                    />
+                  )}
+
+                  {msg?.videoUrl && (
+                    <video
+                      controls
+                      className="w-full h-full object-scale-down"
+                      src={msg?.videoUrl}
+                      alt="Uploaded Image"
+                    />
+                  )}
+                </div>
+                <p className="px-2">{msg.text}</p>
+                <p className="text-xs ml-auto w-fit pr-2">
+                  {moment(msg.createdAt).format("hh:mm")}
+                </p>
+              </div>
+            );
+          })}
+        </div>
+
         {/* upload image display */}
         {message.imageUrl && (
-          <div className="w-full h-full bg-slate-700 bg-opacity-30 flex justify-center items-center rounded overflow-hidden">
+          <div className="w-full h-full sticky bottom-0 bg-slate-700 bg-opacity-30 flex justify-center items-center rounded overflow-hidden">
             <div
               onClick={handleClearUploadImage}
               className="w-fit p-2 absolute top-0 right-0 cursor-pointer hover:text-red-600"
@@ -205,7 +253,7 @@ const Message = () => {
         )}
         {/* upload video display */}
         {message.videoUrl && (
-          <div className="w-full h-full bg-slate-700 bg-opacity-30 flex justify-center items-center rounded overflow-hidden">
+          <div className="w-full h-full sticky bottom-0 bg-slate-700 bg-opacity-30 flex justify-center items-center rounded overflow-hidden">
             <div
               onClick={handleClearUploadVideo}
               className="w-fit p-2 absolute top-0 right-0 cursor-pointer hover:text-red-600"
@@ -224,21 +272,10 @@ const Message = () => {
           </div>
         )}
         {loading && (
-          <div className="w-full h-full flex justify-center items-center">
+          <div className="w-full h-full sticky bottom-0 flex justify-center items-center">
             <Loading />
           </div>
         )}
-        {/* show all messages */}
-
-        <div className="flex flex-col gap-2">
-          {allMessages.map((msg, index) => {
-            return (
-              <div className="bg-white p-2 py-1 rounded w-fit" key={index}>
-                <p className="px-2">{msg.text}</p>
-              </div>
-            );
-          })}
-        </div>
       </section>
       {/* Send messages */}
       <section className="h-16 bg-white flex items-center">
