@@ -152,6 +152,47 @@ io.on("connection", async (socket) => {
     socket.emit("conversation", conversation);
   });
 
+  socket.on("seen", async (messageByUserId) => {
+    // console.log("Seen ", messageByUserId);
+    // console.log("Seen ", user?._id);
+    const conversation = await ConversationModel.findOne({
+      $or: [
+        {
+          sender: user?._id,
+          receiver: messageByUserId,
+        },
+        {
+          sender: messageByUserId,
+          receiver: user?._id,
+        },
+      ],
+    });
+
+    const conversationMessageId = conversation?.messages || [];
+
+    const updateMessages = await MessageModel.updateMany(
+      {
+        _id: { $in: conversationMessageId },
+        messageByUserId: messageByUserId,
+      },
+      { $set: { seen: true } }
+    );
+
+    const conversationSenderSidebar = await getConversation(
+      user?._id.toString()
+    );
+    const conversationReceiverSidebar = await getConversation(messageByUserId);
+
+    io.to(user?._id.toString()).emit(
+      "conversation",
+      conversationSenderSidebar || []
+    );
+    io.to(messageByUserId).emit(
+      "conversation",
+      conversationReceiverSidebar || []
+    );
+  });
+
   // disconnect
   socket.on("disconnect", () => {
     onlineUsers.delete(user?._id);

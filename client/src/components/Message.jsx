@@ -107,6 +107,8 @@ const Message = () => {
     if (socketConnection) {
       socketConnection.emit("message-page", params.userId);
 
+      socketConnection.emit("seen", params?.userId);
+
       socketConnection.on("message-users", (data) => {
         setUserData(data);
       });

@@ -158,7 +158,9 @@ const Sidebar = () => {
                           </div>
                         )}
                       </div>
-                      <p>{conv?.lastMessage?.text}</p>
+                      <p className="text-ellipsis line-clamp-1">
+                        {conv?.lastMessage?.text}
+                      </p>
                     </div>
                   </div>
                   <p className="w-6 h-6 text-xs flex justify-center items-center ml-auto p-1 bg-primary text-white font-semibold rounded-full">
