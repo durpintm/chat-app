@@ -195,7 +195,7 @@ io.on("connection", async (socket) => {
 
   // disconnect
   socket.on("disconnect", () => {
-    onlineUsers.delete(user?._id);
+    onlineUsers.delete(user?._id.toString());
     console.log("Disconnect user ", socket.id);
   });
 });

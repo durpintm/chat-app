@@ -202,10 +202,10 @@ const Message = () => {
             allMessages.map((msg, index) => {
               return (
                 <div
-                  className={`bg-white p-2 py-1 rounded w-fit max-w-[280px] md:max-w-sm lg:max-w-md ${
+                  className={`p-2 py-1 rounded w-fit max-w-[280px] md:max-w-sm lg:max-w-md ${
                     user._id === msg.messageByUserId
                       ? "ml-auto bg-teal-100"
-                      : ""
+                      : "bg-white"
                   }`}
                   key={index}
                 >
